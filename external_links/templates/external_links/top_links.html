@@ -1,63 +1,36 @@
-{% extends "admin/base_site.html" %}
-{% load adminmedia admin_list i18n %}
-{% block title %}
-{% trans "Top clicked links" %} {{block.super}}
-{% endblock %}
-
-{% block extrastyle %}
-  {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />
-  {% if cl.formset %}
-    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
-    <script type="text/javascript" src="../../jsi18n/"></script>
-  {% endif %}
-  {{ media }}
-  {% if not actions_on_top and not actions_on_bottom %}
-    <style>
-      #changelist table thead th:first-child {width: inherit}
-    </style>
-  {% endif %}
-{% endblock %}
-
-{% block bodyclass %}change-list{% endblock %}
+{% extends "admin/change_list.html" %}
+{% load i18n %}
 
 {% if not is_popup %}
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-<a href="../../../">Home</a> &rsaquo; 
-<a href="../../">External_Links</a> &rsaquo; 
-<a href="../">Link clicks</a> &rsaquo; 
-Top links
-</div>
-{% endblock %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label=app_label %}">{{ app_label|capfirst|escape }}</a>
+      &rsaquo; <a href="../">{{ model_label|capfirst }}</a>
+      &rsaquo; {{ title }}
+    </div>
+  {% endblock %}
 {% endif %}
-
-{% block coltype %}flex{% endblock %}
 
 {% block content %}
-
-<h1>{% trans "Top clicked links" %}</h1>
-      
-<div id="content-main">
-<div id="changelist" class="module">
-<table cellspacing="0">
-<thead>
-<tr><th>Link</th><th>Count</th></tr>
-</thead>
-<tbody>
-
-{% for link in object_list %}
-<tr class="row{%cycle 1,2%}"><th><a href="../?q={{link.link|urlencode}}" title="View click
-details for &quot;{{link.link}}&quot;">{{link.link}}</a></th><td>{{link.link__count}}</td></tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
-</div>
-{% if pagination_required %}
-{# how to paginate a valuesqueryset?? #}
-<p class="paginator">
-</p>
-{% endif %}
-
+  <div id="content-main">
+    <div class="module">
+      <table id="result_list">
+        <thead>
+          <tr>
+            <th scope="col"><div class="text"><span>Click</span></div></th>
+            <th scope="col"><div class="text"><span>Link</span></div></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in objects %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+              <td>{{ obj.link__count }}</td>
+              <td><a href="../?q={{obj.link|urlencode}}" title="View click details for &quot;{{obj.link}}&quot;">{{ obj.link }}</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}
