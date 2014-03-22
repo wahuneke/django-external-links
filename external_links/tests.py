@@ -22,7 +22,7 @@ class ExternalLinkTest(TestCase):
         clicks_count = LinkClick.objects.filter(link=DESTINATION).count()
         client = Client()
         external_url = reverse('external_link')
-        client.get(external_url, {'link': DESTINATION})
+        client.get(external_url, {'link': DESTINATION}, follow=True)
         clicks_new_count = LinkClick.objects.filter(link=DESTINATION).count()
         self.assertEqual(clicks_new_count - clicks_count, 1)
 
