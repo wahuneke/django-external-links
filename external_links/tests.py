@@ -26,6 +26,17 @@ class ExternalLinkTest(TestCase):
         clicks_new_count = LinkClick.objects.filter(link=DESTINATION).count()
         self.assertEqual(clicks_new_count - clicks_count, 1)
 
+    def test_badrequestip(self):
+        """
+        If we get a request addr that's not an IP, we don't want to "crash"
+        """
+        clicks_count = LinkClick.objects.filter(link=DESTINATION).count()
+        client = Client(REMOTE_ADDR="notanip")
+        external_url = reverse('external_link')
+        client.get(external_url, {'link': DESTINATION}, follow=True)
+        clicks_new_count = LinkClick.objects.filter(link=DESTINATION).count()
+        self.assertEqual(clicks_new_count - clicks_count, 1)
+
     def test_ttag(self):
         ctx = Context()
         template = Template('{%% load external_link_tags %%}'
