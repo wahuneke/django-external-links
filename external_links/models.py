@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_ipv46_address
 
 from django.db import models
 
@@ -32,6 +34,13 @@ class LinkClick(models.Model):
         if ip_addr in BlockedIp.objects.get_ips():
             # If it's a blocked IP, dont do anything 
             return None
+
+        # if this is an invalid ip address then set it to empty string (rather than failing
+        # altogether when we try to write to the database)
+        try:
+            validate_ipv46_address(ip_addr)
+        except ValidationError:
+            ip_addr = "0.0.0.0"
 
         user = None
         if request.user.is_authenticated():
