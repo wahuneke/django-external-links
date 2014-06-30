@@ -64,3 +64,26 @@ class ExternalLinkTest(TestCase):
         }
         self.assertEqual(final_text, 
             external_link.replace_links(original_text))
+
+    def test_blocktag_notalink(self):
+        """
+        Another test of replacing a block of text. Except this one features several "http://" strings that shouldnt
+        get mangled.
+        """
+        external_link = ExternalLink([])
+        base = 'http://hellodontescapeme.com  <a href="%(link1)s" title="http://dontescapeme.com/hi.html">' \
+               'http://dontgetmeeither.com/anothertrick</a>'
+
+        original_text = base % {
+            'link1': DESTINATION,
+        }
+
+        external_url = reverse('external_link')
+        params = urlencode({'link': DESTINATION})
+
+        final_dest = external_url + '?' + params
+        final_text = base % {
+            'link1': final_dest,
+        }
+        self.assertEqual(final_text,
+            external_link.replace_links(original_text))

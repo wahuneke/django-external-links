@@ -67,11 +67,12 @@ class ExternalLink(Node):
             3. Join it all back together for printing
         """
         redirect_endpoint = self.prefix + reverse('external_link')
+        skipfirst = original_text.startswith('http:/')
         pieces = EXTLINKS.split(original_text)
         result = []
 
-        for piece in pieces:
-            if piece.startswith('http:/'):
+        for i, piece in enumerate(pieces):
+            if piece.startswith('http:/') and (not skipfirst or i > 0):
                 # Replace the &amp; as the & will be urlencoded. If we don't do
                 # this, the resulting url will be &amp;amp; and GET params
                 # will get lost :(
