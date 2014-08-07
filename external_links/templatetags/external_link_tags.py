@@ -29,6 +29,24 @@ def external(link):
     return redirect_endpoint + '?' +  params
 
 
+@register.assignment_tag
+def external_as(link):
+    """
+    Replaces an external link with a redirect to
+    keep track of the clicked link.
+
+    Assign the result to a variable
+
+    To be used as:
+        {% external_as "http://google.com/" as link %}
+
+    """
+    redirect_endpoint = reverse('external_link')
+    params = urlencode({'link': link})
+
+    return redirect_endpoint + '?' +  params
+
+
 @register.tag(name='externalblock')
 def do_external_block(parser, token):
     """
