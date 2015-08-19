@@ -21,7 +21,7 @@ class LinkClick(models.Model):
     site = models.ForeignKey(Site)
     link = models.CharField(max_length=512)
     referer = models.CharField(max_length=512)
-    ip_addr = models.IPAddressField()
+    ip_addr = models.GenericIPAddressField()
     date = models.DateField(auto_now=True)
     time = models.TimeField(auto_now=True)
 
@@ -71,7 +71,7 @@ class BlockedIp(models.Model):
     Contains a list of IPs that shouldn't be tracked, such as search engines
     crawlers, etc.
     """
-    ip_addr = models.IPAddressField()
+    ip_addr = models.GenericIPAddressField()
     name = models.CharField(max_length=128, blank=True)
 
     objects = BlockedManager()
